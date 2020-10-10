@@ -62,6 +62,9 @@ namespace Knyaz.Optimus.Tests.Dom.Css
 		[TestCase("input:-moz-suppressed", "<input type=text class='form-control' name=nomatch></input>")]
 		[TestCase("[data-toggle=\"dropdown\"]", "<span data-toggle=dropdown name=match></span>")]
 		[TestCase("a.user.active", "<a name=match class='user active'></a>")]
+		//escaped chars
+		[TestCase(".a\\.b", "<div name=match class='a.b'></div><div name=nomatch class='a'></div>")]
+		[TestCase(".a\\.b", "<div name=match class=a.b></div><div name=nomatch class=a></div>")]
 		public void MatchChildTest(string selectorText, string html)
 		{
 			var engine = Load(html);

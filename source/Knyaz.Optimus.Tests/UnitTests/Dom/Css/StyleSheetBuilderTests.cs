@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading;
 using Knyaz.Optimus.Dom.Css;
 using NUnit.Framework;
 
@@ -19,6 +18,26 @@ namespace Knyaz.Optimus.Tests.Dom.Css
                 ((CssStyleRule)styleSheet.CssRules[1]).Style.Length == 2 &&
                 ((CssStyleRule)styleSheet.CssRules[1]).Style.GetPropertyValue("height") == "100px");
         }
+
+        [TestCase(@".ABC", Description = "Class @")]
+        [TestCase(@".\\@", Description = "Class @")]
+        [TestCase(@".\.", Description = "Class .")]
+        //[TestCase(@".\3A \) {background: lime}", @".\:\)", Description = "Class :)")]
+        [TestCase(@".\31 23", Description = "Class 123")]
+        [TestCase(@".\<p\>", Description = "Class <p>")]
+        [TestCase(@".\+", Description = "Class +")]
+        [TestCase(@".\#", Description = "Class #")]
+        [TestCase(@".\_", Description = "Class _")]
+        [TestCase(@".\{\}", Description = "Class {}")]
+        [TestCase(@".\#fake\-id", Description = "Class #fake-id")]
+        [TestCase(@".foo\.bar")]
+        [TestCase(@".\[\]", Description = "Class []")]
+        [TestCase(@".f\/", Description = "Class f/")]
+        public static void BuildStyleSheetClass(string selectorText) =>
+	        Build(selectorText+" {background: lime}").Assert(styleSheet => 
+		        styleSheet.CssRules.Count == 1 &&
+		        ((CssStyleRule)styleSheet.CssRules[0]).SelectorText == selectorText &&
+		        ((CssStyleRule)styleSheet.CssRules[0]).Style.GetPropertyValue("background") == "lime");
 
 	    [TestCase("@import \"a.css\"; div{background-color:red}")]
 	    [TestCase("@import url(a.css); div{background-color:red}")]
@@ -42,7 +61,7 @@ namespace Knyaz.Optimus.Tests.Dom.Css
 
 	    
 
-	    private CssStyleSheet Build(string css)
+	    private static CssStyleSheet Build(string css)
 	    {
 		    return StyleSheetBuilder.CreateStyleSheet(new StringReader(css), s => null);
 	    }

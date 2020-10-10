@@ -26,6 +26,7 @@ namespace Knyaz.Optimus.Html
 			var type = CssChunkTypes.Selector;
 			var newType = CssChunkTypes.Selector;
 			var data = new StringBuilder();
+			var prevChar = (char) 0;
 
 			while (true)
 			{
@@ -54,7 +55,7 @@ namespace Knyaz.Optimus.Html
 
 				switch (type)
 				{
-					case CssChunkTypes.Selector:
+					case CssChunkTypes.Selector when prevChar != '\\':
 						if (c == '{')
 							newType = CssChunkTypes.Property;
 						else if(c == '@')
@@ -98,7 +99,10 @@ namespace Knyaz.Optimus.Html
 				{
 					data.Append(c);
 				}
+
+				prevChar = c;
 			}
 		}
+
 	}
 }
